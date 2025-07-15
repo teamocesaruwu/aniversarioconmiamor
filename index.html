@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Te amo Cesitar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>" />
+    <style>
+        /* Estilos base y botón de inicio */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #e6e0f8, #f0e9ff);
+            color: #2e2e2e;
+            overflow-x: hidden;
+            line-height: 1.6; /* Added for better readability */
+        }
+        #startButton {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(230, 224, 248, 0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center; /* Center text within the start screen */
+        }
+        #startButton h2 { /* Style for the welcome text */
+            font-family: 'Dancing Script', cursive; /* Asegura que mantenga la fuente */
+            font-size: 2.2em;
+            color: #5e35b1;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        #startButton button {
+            padding: 20px 40px;
+            font-size: 1.5em;
+            font-family: 'Dancing Script', cursive;
+            background-color: #ba68c8;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        #startButton button:hover {
+            transform: scale(1.1);
+            background-color: #a456b9;
+        }
+
+        section {
+            min-height: 100vh;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1; /* Ensure content is above floating hearts */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; /* Hidden initially, revealed after start button click */
+            transition: opacity 1s ease-out; /* Smooth transition when revealed */
+        }
+        
+        body.content-visible section {
+            opacity: 1;
+        }
+
+        h1, h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #5e35b1;
+            font-size: 3.5em;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 { font-size: 2.5em; }
+
+        p {
+            font-size: 1.15em;
+            line-height: 1.8em;
+            margin-bottom: 18px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dedicatoria {
+            max-width: 850px;
+            margin: auto;
+            text-align: left;
+            background: #fdfbff;
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(209, 196, 233, 0.8);
+            border: 2px dashed #ce93d8;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dedicatoria::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            width: 50px;
+            height: 50px;
+            background: #ba68c8;
+            border-radius: 10px;
+            transform: rotate(45deg);
+            opacity: 0.7;
+        }
+
+        /* Styles for the surprise image container */
+        .surprise-image-container {
+            margin-top: 40px;
+            width: 300px;
+            height: 420px;
+            border: 5px solid #9575cd;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(179, 157, 219, 0.7);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            background-color: #d1c4e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.5s ease;
+        }
+
+        .surprise-image-container::before {
+            content: 'Haz clic para revelar';
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.4em;
+            color: #5e35b1;
+            position: absolute;
+            z-index: 2;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .surprise-image-container.revealed::before {
+            opacity: 0;
+        }
+
+        .surprise-image-container.revealed {
+            background-color: transparent;
+        }
+
+        .surprise-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 1.5s ease-out, transform 1.5s ease-out;
+        }
+
+        .surprise-image-container.revealed img {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* --- New styles for interactivity --- */
+        .corazon {
+            width: 20px;
+            height: 20px;
+            background-color: #ba68c8;
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            animation: flotar 15s linear infinite;
+            clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 20% 100%, 0% 35%);
+            opacity: 0.6;
+            filter: drop-shadow(0 0 5px #b39ddb);
+        }
+
+        @keyframes flotar {
+            0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-60vh) scale(1.1) rotate(180deg); opacity: 0.5; }
+            100% { transform: translateY(-120vh) scale(1.5) rotate(360deg); opacity: 0; }
+        }
+
+        .clicked-heart {
+            position: absolute;
+            background-color: #ff69b4; /* Pink heart */
+            width: 15px;
+            height: 15px;
+            clip-path: polygon(50% 0%, 100% 35%, 80% 100%, 20% 100%, 0% 35%);
+            animation: fadeOutUp 2s forwards;
+            pointer-events: none; /* Allow clicks to pass through */
+            z-index: 1000;
+        }
+
+        @keyframes fadeOutUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+        }
+
+        .popup-message {
+            position: fixed;
+            background-color: rgba(189, 164, 224, 0.9); /* Soft purple */
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1em;
+            z-index: 1001;
+            opacity: 0;
+            animation: fadeInOut 5s forwards; /* Animation duration */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        .initial-sparkle {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: sparkleBurst 1.5s ease-out forwards;
+            box-shadow: 0 0 30px #e0b0ff, 0 0 60px #c58de3;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        @keyframes sparkleBurst {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        /* Animation for section content appearing */
+        section > * {
+            /* This animation is now managed by JS on content-visible, remove from here if causing issues */
+            /* animation: aparecer 1s ease-out forwards; */
+        }
+
+        @keyframes aparecer {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typing effect specific styles */
+        .dedicatoria p {
+            opacity: 0; /* Hidden initially for typing effect */
+            transform: translateY(20px); /* Slight initial offset */
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Added transition for smooth appearance */
+            /* IMPORTANT: The original content of these paragraphs in HTML must be EMPTY */
+        }
+
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            h2 { font-size: 2em; }
+            p { font-size: 1em; }
+            .dedicatoria { padding: 30px; }
+            .surprise-image-container {
+                width: 250px;
+                height: 350px;
+            }
+            .surprise-image-container::before {
+                font-size: 1.2em;
+            }
+            #startButton button {
+                padding: 15px 30px;
+                font-size: 1.2em;
+            }
+            #startButton h2 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.8em; }
+            .dedicatoria { padding: 20px; }
+            .surprise-image-container {
+                width: 220px;
+                height: 308px;
+            }
+            .surprise-image-container::before {
+                font-size: 1em;
+            }
+            #startButton button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            #startButton h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="startButton">
+        <h2>15-07-2024</h2>
+        <button>Apretame :3 💜</button>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://www.dropbox.com/scl/fi/axl9tnm4q39p8ttita0bi/YouTube-K_NjI7iuwtk.mp3?rlkey=bktnh36w6qx5qar64zvezruxl&dl=1" type="audio/mpeg">
+        Tu navegador no soporta audio HTML5.
+    </audio>
+
+    <section id="pagina1">
+        <h1>Feliz Aniversario mi amor</h1>
+        <p data-original-text="Un año después, seguimos eligiéndonos. No importa la distancia, ni los días difíciles. Esta carta es una forma de decirte todo lo que a veces no puedo poner en palabras habladas. Y aunque sea virtual, quiero que sientas cada palabra como un abrazo real."></p>
+    </section>
+
+    <section id="pagina2">
+        <div class="dedicatoria">
+            <p data-original-text="Mi amor, Cesar:"></p>
+            <p data-original-text="Hoy se cumple un año desde que nuestras vidas se cruzaron de una forma tan inesperada como mágica. Un año desde que empecé a conocerte de una manera más profunda que amistad, a descubrir cada rincón de tu forma de ser, a sentir cómo tu presencia (aunque a veces solo fuera a través de una pantalla) se volvía parte esencial de mis días. Y no puedo evitar mirar hacia atrás, a todo lo que hemos vivido, y emocionarme."></p>
+            <p data-original-text="No fue un año fácil. Hubo momentos difíciles, silencios que dolían, distancias que pesaban, y días en los que tal vez sentimos que el amor se ponía a prueba. Pero, ¿sabés algo? Nunca dejé de elegirte. Ni siquiera en los momentos más complicados. Porque por más que a veces doliera, por más que no todo fuera perfecto, sos vos. Y lo volvería a vivir todo con tal de seguir construyendo esto con vos. Ese tipo de situaciones no solo nos fortalecen sino que nos hacen crecer como pareja y tener esto tan lindo que cada vez se nutre más de amor."></p>
+            <p data-original-text="Me enamoré de tu forma de mirar, de tu voz que me calma, de tus palabras sinceras, de tu ternura escondida en gestos simples, de tu forma de escucharme incluso cuando no entendías del todo, solo porque sabías que lo necesitaba. Me enamoré de tu presencia constante, de cómo me hacés sentir importante, cuidada, querida. Me enamoré de tu risa, de tus silencios, de tu paciencia cuando yo me derrumbaba. Me enamoré de vos, César. De todo lo que sos."></p>
+            <p data-original-text="Te admiro tanto. Tu forma de pensar, tu manera de ver el mundo, tu sensibilidad, tu inteligencia, esa mezcla perfecta entre fortaleza y dulzura. Sos alguien que no se encuentra todos los días. Sos distinto, y eso me encanta. Me encanta cómo podés hacerme reír incluso cuando siento que no puedo más. Me encanta que seamos tan nuestros, que tengamos formas únicas de hablarnos, de cuidarnos, de decirnos “te amo” sin palabras."></p>
+            <p data-original-text="Y aunque a veces la distancia dolió, aprendí que el amor no siempre necesita un abrazo físico para sentirse real. Porque te siento acá, en cada parte de mí. En mi rutina, en mis pensamientos, en mis ganas de compartirte todo. Cada vez que te pienso, que veo algo que me gustaría mostrarte, cada vez que te imagino sonriendo vos estás conmigo. Y eso no lo borra ningún kilómetro."></p>
+            <p data-original-text="Gracias por bancarme cuando estoy mal, por quedarte a mi lado incluso cuando me pongo difícil, por perdonarme, por elegirme incluso cuando no soy la mejor versión de mí. Gracias por todos los “buenos días” y “buenas noches”, por cada conversación profunda, por cada chiste tonto, por cada recuerdo compartido. Gracias por seguir acá. Gracias por ser vos."></p>
+            <p data-original-text="Hoy, a un año de estar juntos, solo quiero decirte que te amo con todo lo que soy. Que no importa lo que venga, mientras lo enfrentemos juntos. Que mi corazón sigue latiendo por vos, y que aunque el mundo cambie, aunque haya miedos o dudas, mi amor por vos es constante."></p>
+            <p data-original-text="No sé qué nos depara el futuro, pero sí sé que quiero seguir eligiéndote, una y otra vez. Porque este amor vale la pena. Porque vos valés la pena."></p>
+            <p data-original-text="Feliz aniversario, amor."></p>
+            <p data-original-text="Gracias por este primer año."></p>
+            <p data-original-text="Ojalá sea el primero de muchos."></p>
+            <p data-original-text="Con todo mi amor,"></p>
+            <p data-original-text="Flor <3"></p>
+        </div>
+    </section>
+
+    <section id="pagina3">
+        <h2>UwU</h2>
+        <div id="surpriseImageContainer" class="surprise-image-container">
+            <img src="https://i.imgur.com/NHRXNFN.png" alt="Nuestra foto de aniversario">
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.querySelector("#startButton button");
+            const startScreen = document.getElementById("startButton");
+            const music = document.getElementById("bgMusic");
+            const body = document.body;
+
+            // --- Initial Start Screen & Music Play ---
+            startBtn.addEventListener("click", () => {
+                // Try to play music. Browsers may still block if not a direct file.
+                music.play().catch(err => {
+                    console.log("Autoplay bloqueado o error de reproducción:", err);
+                    // Optionally, you could show a message to the user here
+                });
+                
+                startScreen.style.opacity = "0"; // Fade out start screen
+                startScreen.addEventListener('transitionend', () => {
+                    startScreen.style.display = "none"; // Hide after fade out
+                    body.classList.add('content-visible'); // Show main content
+                }, { once: true });
+
+                // Start typing effect after a short delay (e.g., after the transition of the start screen)
+                // We add a delay to allow the content to become visible before typing starts
+                setTimeout(() => {
+                    typeWriter();
+                }, 1500); // 1.5 seconds delay after clicking "Comenzar"
+            });
+
+            // --- Corazones flotantes de fondo ---
+            const numHearts = 40;
+            for (let i = 0; i < numHearts; i++) {
+                let heart = document.createElement('div');
+                heart.className = 'corazon';
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.animationDuration = `${10 + Math.random() * 10}s`;
+                heart.style.animationDelay = `${Math.random() * 5}s`;
+                heart.style.width = heart.style.height = `${15 + Math.random() * 25}px`;
+                heart.style.opacity = 0.4 + Math.random() * 0.4;
+                document.body.appendChild(heart);
+            }
+
+            // --- Corazones al hacer clic en cualquier parte de la página ---
+            document.addEventListener('click', (event) => {
+                let heart = document.createElement('div');
+                heart.className = 'clicked-heart';
+                heart.style.left = `${event.clientX}px`;
+                heart.style.top = `${event.clientY}px`;
+                document.body.appendChild(heart);
+
+                heart.addEventListener('animationend', () => {
+                    heart.remove();
+                });
+            });
+
+            // Mensajes emergentes aleatorios
+            const sweetMessages = [
+                "Sos mi persona favorita en el mundo.",
+                "Cada día con vos es un regalo.",
+                "Tu sonrisa ilumina mi vida.",
+                "Con vos todo es mejor.",
+                "Gracias por cada momento, mi amor.",
+                "Mi corazón es tuyo.",
+                "Todo vale la pena si es con vos.",
+                "Siempre vos, siempre nosotros.",
+                "Sos el mejor regalo de mi vida.",
+                "Mi amor por ti crece cada día."
+            ];
+
+            function showRandomMessage() {
+                const message = sweetMessages[Math.floor(Math.random() * sweetMessages.length)];
+                let popup = document.createElement('div');
+                popup.className = 'popup-message';
+                popup.textContent = message;
+
+                popup.style.left = `${Math.random() * 80 + 10}vw`; 
+                popup.style.top = `${Math.random() * 60 + 20}vh`; 
+
+                document.body.appendChild(popup);
+
+                popup.addEventListener('animationend', () => {
+                    popup.remove();
+                });
+            }
+
+            setInterval(showRandomMessage, 7000 + Math.random() * 8000); // Muestra un mensaje cada 7-15 segundos
+
+            // Efecto de escritura en la dedicatoria
+            const dedicationParagraphs = document.querySelectorAll('.dedicatoria p');
+            let paragraphIndex = 0;
+            let charIndex = 0;
+            const typingSpeed = 30; // Milisegundos por caracter
+
+            function typeWriter() {
+                if (paragraphIndex < dedicationParagraphs.length) {
+                    const currentParagraph = dedicationParagraphs[paragraphIndex];
+                    const originalText = currentParagraph.getAttribute('data-original-text');
+
+                    currentParagraph.style.opacity = 1; // Hace el párrafo visible
+
+                    if (charIndex < originalText.length) {
+                        currentParagraph.textContent += originalText.charAt(charIndex);
+                        charIndex++;
+                        setTimeout(typeWriter, typingSpeed);
+                    } else {
+                        // Párrafo actual terminado, pasa al siguiente después de una pausa
+                        charIndex = 0;
+                        paragraphIndex++;
+                        setTimeout(typeWriter, typingSpeed * 20); // Pausa antes del siguiente párrafo
+                    }
+                }
+            }
+
+            // Inicia el efecto de escritura después de un breve retraso
+            setTimeout(() => {
+                typeWriter();
+            }, 2000); // Inicia la escritura después de 2 segundos
+
+            // Script para la revelación de la imagen sorpresa al hacer clic
+            const surpriseImageContainer = document.getElementById('surpriseImageContainer');
+            
+            surpriseImageContainer.addEventListener('click', () => {
+                surpriseImageContainer.classList.add('revealed');
+            });
+        });
+    </script>
+
+</body>
+</html>
+</html>
